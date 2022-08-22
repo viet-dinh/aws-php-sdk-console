@@ -27,13 +27,21 @@ class ExportLatencyAppsyncToS3 extends Command
                 'ed',
                 InputOption::VALUE_REQUIRED, 
                 'End date?'
-            );;
+            )->addOption(
+                'namespace', 
+                null,
+                InputOption::VALUE_OPTIONAL, 
+                'name space cloudwatch',
+                null
+            );//todo add full optional option
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $startDateOption = $input->getOption('start-date');
         $endDateOption = $input->getOption('end-date');
+        $nameSpace = $input->getOption('namespace') ?? 'AWS/AppSync';
+
         $output->writeln(sprintf('Export latency logs from %s to %s', $startDateOption, $endDateOption));
 
         $startDate = new DateTime($input->getOption('start-date'));
@@ -47,8 +55,12 @@ class ExportLatencyAppsyncToS3 extends Command
             
             $data = array_merge(
                 $data, 
-                CloudWatch::getInstance()->getService()->getLatencyStatisticLog($period[0], $period[1])
+                CloudWatch::getInstance()->getService()->getLatencyStatisticLog($period[0], $period[1], $nameSpace)
             );
+
+            if (empty($data)) {
+                $output->writeln('Empty');
+            }
         }
 
         ksort($data);

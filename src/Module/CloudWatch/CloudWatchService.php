@@ -37,23 +37,28 @@ class CloudWatchService
     public function getLatencyStatisticLog(
         DateTime $startTime,
         DateTime $endTime,
-        $metricId = 'bhiu7e5jwfdy3kzoyzx4we5csa',
-        $period=300
+        string $nameSpace = 'AWS/AppSync',
+        string $metricName = 'Latency',
+        string $dimensionName = 'GraphQLAPIId',
+        string $dimensionValue = 'bhiu7e5jwfdy3kzoyzx4we5csa',
+        string $statistic = 'p95',
+        int $period = 300,
+        string $unit = 'Milliseconds'
     ) {
         $res = CloudWatch::getInstance()->getClient()->getMetricStatistics([
-            'Namespace' => 'AWS/AppSync', // REQUIRED
-            'MetricName' => 'Latency', // REQUIRED
+            'Namespace' => $nameSpace,
+            'MetricName' => $metricName,
             'Dimensions' => [
                 [
-                    'Name' => 'GraphQLAPIId', // REQUIRED
-                    'Value' => $metricId, // REQUIRED
+                    'Name' => $dimensionName,
+                    'Value' => $dimensionValue,
                 ],
             ],
-            'StartTime' => $startTime, // REQUIRED
-            'EndTime' => $endTime, // REQUIRED
-            'ExtendedStatistics' => ['p95'],
-            'Period' => $period, // REQUIRED
-            'Unit' => 'Milliseconds',
+            'StartTime' => $startTime,
+            'EndTime' => $endTime,
+            'ExtendedStatistics' => [$statistic],
+            'Period' => $period,
+            'Unit' => $unit,
         ]);
 
         $data = [];
@@ -61,11 +66,11 @@ class CloudWatchService
         
         foreach($res->get('Datapoints') as $dataPoint) {
             $datum = [];
-            $datum['Time'] = $dataPoint['Timestamp']
+            $datum['time'] = $dataPoint['Timestamp']
                 //->setTimezone($timeZone)
                 ->__toString();
             $datum['p95'] = $dataPoint['ExtendedStatistics']['p95'];
-            $data[$datum['Time']] = $datum;
+            $data[$datum['time']] = $datum;
         }
         
         return $data;
