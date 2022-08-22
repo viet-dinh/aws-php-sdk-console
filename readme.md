@@ -1,6 +1,6 @@
 # AWS PHP SDK / Console
 
-This is use to run command to cli aws
+Export appsync latency log with statistic (p95) from cloudwatch and upload to s3
 
 ## Installation
 
