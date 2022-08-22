@@ -1,0 +1,14 @@
+{
+  "require": {
+    "aws/aws-sdk-php": "^3.233",
+    "symfony/console": "^5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Console\\": "src"
+    },
+    "classmap": [
+      "src"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+  
+use Symfony\Component\Console\Application;
+use Console\Command\ExportLatencyAppsyncToS3;
+date_default_timezone_set('UTC');
+define('ROOT_DIRECTORY', getcwd());
+
+$app = new Application();
+$app->add(new ExportLatencyAppsyncToS3());
+$app->run();
